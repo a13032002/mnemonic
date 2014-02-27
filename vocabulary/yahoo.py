@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.2
+# -*- coding: utf-8 -*-
 from pyquery import PyQuery as pq
 from lxml import etree
 import urllib
