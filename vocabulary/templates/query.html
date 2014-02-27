@@ -1,0 +1,51 @@
+{% extends "base-templates/base.html" %}
+{% load staticfiles %}
+{% block js %}
+<script src="{% static "query.js"%}"></script>
+<script src="{% static "query_event.js"%}"></script>
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static "query.css" %}" type="text/css">
+{% endblock %}
+{% block title %}
+	-- {{ vocabulary.spell }}  
+	<small>{{ vocabulary.kk }}</small> 
+	<span class="badge" id="vocabulary-id">
+		{% block vocabulary-id %}
+		{{vocabulary.id}}
+		{% endblock %}
+	</span>  
+	<small> ({{vocabulary.time_inserted}}) </small>
+{% endblock %}
+{% block content %}
+<button id="btn-prev" class="btn-success btn-lg"> <span class="glyphicon glyphicon-arrow-left"> </span> </button>
+<button id="btn-next" class="btn-success btn-lg"> <span class="glyphicon glyphicon-arrow-right"> </span> </button>
+<form class="form-inline" role="form" id="tag-form">
+{% for tag_relation in vocabulary.tagrelation_set.all %}
+	<span class="label label-success"> {{tag_relation.tag.name }}</span>
+{% endfor %}
+	<div class="form-group">
+		<label class="sr-only" for="tag">Tag</label>
+		<input type="text" class="form-control" id="tag" placeholder="Tag">
+	</div>
+	<button type="submite" class="btn btn-success">Add</button>
+</form>
+<hr>
+{% for part_of_speech in part_of_speechs %}
+<div class="row part-of-speech-row">
+	<div class="col-md-2"><h4>{{ part_of_speech.description }}</h4></div>
+	<div class="col-md-6">
+		{% for explanation in vocabulary.explanation_set.all %}
+		{% if explanation.part_of_speech == part_of_speech %}
+		<div class="explanation" explanation-id="{{explanation.id}}">
+			<button name="btn-up"> <span class="btn btn-sm glyphicon glyphicon-arrow-up"> </span> </button>
+			<button name="btn-mark-important"> <span class="btn btn-sm glyphicon glyphicon-pushpin"> </span> </button>
+			<span class="description {% if explanation.mark_important %} important {% endif %}"> {{ explanation.description }} </span>
+		</div>
+		{% endif %}
+		{% endfor %}
+		<hr>
+	</div>
+</div>
+{% endfor %}
+{% endblock %}

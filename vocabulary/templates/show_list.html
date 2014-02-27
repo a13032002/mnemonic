@@ -1,0 +1,10 @@
+{% extends "query.html" %}
+{% block js %}
+{% load staticfiles %}
+<script src="{% static "show_list_event.js"%}"></script>
+<script src="{% static "query.js"%}"></script>
+{% endblock %}
+
+{% block vocabulary-id %}
+{{ vocabulary.display_order}}
+{% endblock %}
