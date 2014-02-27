@@ -6,7 +6,7 @@ from vocabulary.models import Vocabulary, Explanation, Tag, TagRelation
 from vocabulary.yahoo import query_vocabulary
 from django.utils.dateparse import parse_datetime
 
-import random
+import random, pytz
 # Create your views here.
 
 def query(request, vocabulary):
@@ -39,13 +39,15 @@ def make_list(request, tag, time_begin, time_end):
 	def filter(vocabulary, tag, time_begin, time_end):
 		if tag != 'none' and len([tag for tagrelation in vocabulary.tagrelation_set.all() if tagrelation.tag.name == tag]) == 0:
 			return False
-		if time_begin != 'none' and vocabulary.time_inserted < parse_datetime(time_begin):
+		if time_begin is not None and vocabulary.time_inserted < time_begin:
 			return False
-		if time_end != 'none' and vocabulary.time_end > parse_datetime(time_end):
+		if time_end is not None and vocabulary.time_inserted > time_end :
 			return False
 		return True
 
-	vocabularies = [v for v in Vocabulary.objects.all() if filter(v, tag, time_begin, time_end)]
+	_time_begin = None if time_begin == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_begin), is_dst=False)
+	_time_end = None if time_end == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_end), is_dst=False)
+	vocabularies = [v for v in Vocabulary.objects.all() if filter(v, tag, _time_begin, _time_end)]
 
 	number_of_vocabulary = len(vocabularies)
 	
