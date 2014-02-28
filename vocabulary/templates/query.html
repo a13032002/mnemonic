@@ -28,7 +28,7 @@
 		<label class="sr-only" for="tag">Tag</label>
 		<input type="text" class="form-control" id="tag" placeholder="Tag">
 	</div>
-	<button type="submite" class="btn btn-success">Add</button>
+	<button type="submit" class="btn btn-success">Add</button>
 </form>
 <hr>
 {% for part_of_speech in part_of_speechs %}
@@ -48,4 +48,13 @@
 	</div>
 </div>
 {% endfor %}
+{% block query %}
+<form class="form-inline" role="form" id="query-form">
+	<div class="form-group">
+		<label class="sr-only" for="query">Query</label>
+		<input type="text" class="form-control" id="query" placeholder="Query">
+	</div>
+	<button type="submit" class="btn btn-success">Search</button>
+</form>
+{% endblock %}
 {% endblock %}

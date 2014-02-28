@@ -9,7 +9,7 @@ $(document).ready(
 			.bind('click', btnPreviousVocabulary)
 			;
 		$('#btn-next')
-			.css({'position':'fixed', 'left':($(window).width() - 100 - $('#btn-next').width()) + 'px', 'top': ($(window).height() / 2 - $('#btn-next').height() / 2) + 'px'})
+			.css({'position':'fixed', 'right':'10px', 'top': ($(window).height() / 2 - $('#btn-next').height() / 2) + 'px'})
 			.bind('click', btnNextVocabulary)
 			;
 		$('#tag-form').bind('submit', formTagSubmit);
