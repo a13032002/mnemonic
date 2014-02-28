@@ -1,0 +1,11 @@
+.part-of-speech-row
+{
+	margin-bottom:0px;
+}
+
+.important
+{
+	color:red;
+	padding:6px;
+	border:solid 1px red;
+}

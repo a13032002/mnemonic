@@ -70,10 +70,10 @@ WSGI_APPLICATION = 'mnemonic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join('/home/jimmykuo/mnemonic', 'db.sqlite3'),
     }
 }
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'apache_static')
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
