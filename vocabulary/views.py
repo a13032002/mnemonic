@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from vocabulary.models import Vocabulary, Explanation, Tag, TagRelation
+from vocabulary.models import Vocabulary, Explanation, Tag, TagRelation, Question
 from vocabulary.yahoo import query_vocabulary
 from django.utils.dateparse import parse_datetime
 
@@ -58,7 +58,7 @@ def make_list(request, tag, time_begin, time_end):
 		vocabulary.display_order = index
 		vocabulary.save()
 
-	return render(request, "information.html", {'number' : len(indexes)})
+	return render(request, "information.html", {'text' : 'The display order of  %d vocabularies has been shuffled' % len(indexes)})
 
 
 def explanation_mark_important(request, explanation_id):
@@ -101,3 +101,32 @@ def show_list(request, order):
 	except ObjectDoesNotExist as e:
 		return HttpResponse('<script>window.history.back()</script>')
 	return render(request, 'show_list.html', {'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
+
+def initialize_test(request):
+	for vocabulary in Vocabulary.objects.all():
+		for explanation in vocabulary.explanation_set.all():
+			question = Question(vocabulary = vocabulary, explanation = explanation, timestamp = 0, delay = 10)
+			question.save()
+	
+	return render(request, "information.html", {'text' : 'Questions has been initialized!'})
+
+def test(request):
+	questions = Question.objects.order_by('timestamp')
+	vocabulary = random.choice(questions).vocabulary
+	choices = [{'id': question.id, 'answer': question.vocabulary.spell, 'description': question.explanation.description, 'is_answer': True} for question in questions.filter(vocabulary = vocabulary)[0:1]]
+	number_of_correct_choices = len(choices)
+	choices += [{'id': question.id, 'answer':question.vocabulary.spell, 'description': question.explanation.description, 'is_answer': False} for question in questions.exclude(vocabulary = vocabulary)[0:3]]
+	random.shuffle(choices)
+	return render(request, 'test.html', {'choices': choices, 'vocabulary': vocabulary, 'number_of_correct_choices': number_of_correct_choices})
+	
+def update_question_state(request, question_id, is_correct):
+	target_question = Question.objects.get(id = question_id)
+	if is_correct == "1":
+		target_question.delay = max(target_question.delay / 10, 1)
+	else:
+		target_question.delay = min(target_question.delay * 10, 10000)
+
+	target_question.timestamp += target_question.delay
+	target_question.save()
+	return HttpResponse('')
+

@@ -1,0 +1,37 @@
+{% extends "base-templates/base.html" %}
+{% load staticfiles %}
+{% block js %}
+<script src="{% static "test.js" %}"></script>
+{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static "test.css" %}" type="text/css">
+{% endblock %}
+{% block title %}
+-- {{ vocabulary.spell }}  
+<small>{{ vocabulary.kk }}</small> 
+<span class="badge" id="vocabulary-id">
+	{% block vocabulary-id %}
+	{{vocabulary.id}}
+	{% endblock %}
+</span>  
+<small> ({{vocabulary.time_inserted}}) </small>
+{% endblock %}
+{% block content %}
+<hr>
+<div class="row"> Select {{number_of_correct_choices}} correct meanings of the word {{vocabulary.spell}} </div>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2" >
+		<form role="form" id="choice-form">
+			{% for choice in choices %}
+			<div class="checkbox alert" question-id="{{ choice.id }}">
+				<input type="checkbox" class="question-option"  is-answer="{% if choice.is_answer %}true{% else %}false{% endif %}"> {{choice.description}} <span class="answer badge"> {{choice.answer}} </span>
+			</div>
+			{% endfor %}
+			<button type="submit" class="btn btn-success" id="btn-submit">Submit</button>
+			<button type="submit" class="btn btn-success" id="btn-next">Next</button>
+		</form>
+	</div>
+</div>
+{% block query %}
+{% endblock %}
+{% endblock %}

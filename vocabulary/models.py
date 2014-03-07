@@ -59,3 +59,11 @@ class Tag(models.Model):
 class TagRelation(models.Model):
 	tag = models.ForeignKey(Tag)
 	vocabulary = models.ForeignKey(Vocabulary)
+
+
+class Question(models.Model):
+	vocabulary = models.ForeignKey(Vocabulary)
+	explanation = models.ForeignKey(Explanation)
+	timestamp = models.IntegerField()
+	delay = models.IntegerField()
+

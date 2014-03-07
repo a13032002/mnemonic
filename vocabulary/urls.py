@@ -12,4 +12,7 @@ urlpatterns = patterns('',
 	url(r'^(?P<vocabulary_id>\d+)/previous$', views.get_previous_vocabulary),
 	url(r'^(?P<vocabulary_id>\d+)/tag/add/(?P<tag_name>[a-zA-Z]+)$', views.add_tag),
 	url(r'^list/(?P<order>[-]{0,1}\d+)$', views.show_list),
+	url(r'^test/initialize_test$', views.initialize_test),
+	url(r'^test/test$', views.test),
+	url(r'^test/update/(?P<question_id>\d+)/(?P<is_correct>[01])$', views.update_question_state),
 )
