@@ -45,6 +45,11 @@ def make_list(request, tag, time_begin, time_end):
 			return False
 		return True
 
+	for vocabulary in Vocabulary.objects.all():
+		if vocabulary.display_order != -1:
+			vocabulary.display_order = -1;
+			vocabulary.save()
+	
 	_time_begin = None if time_begin == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_begin), is_dst=False)
 	_time_end = None if time_end == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_end), is_dst=False)
 	vocabularies = [v for v in Vocabulary.objects.all() if filter(v, tag, _time_begin, _time_end)]
