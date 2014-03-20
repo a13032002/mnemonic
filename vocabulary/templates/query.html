@@ -20,6 +20,8 @@
 {% block content %}
 <button id="btn-prev" class="btn-success btn-lg"> <span class="glyphicon glyphicon-arrow-left"> </span> </button>
 <button id="btn-next" class="btn-success btn-lg"> <span class="glyphicon glyphicon-arrow-right"> </span> </button>
+{% block extra_buttons %}
+{% endblock %}
 <form class="form-inline" role="form" id="tag-form">
 {% for tag_relation in vocabulary.tagrelation_set.all %}
 	<span class="label label-success"> {{tag_relation.tag.name }}</span>

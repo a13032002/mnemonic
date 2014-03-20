@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from vocabulary.models import Vocabulary, Explanation, Tag, TagRelation, Question
+from vocabulary.models import Vocabulary, Explanation, Tag, TagRelation, Question, ListEntry
 from vocabulary.yahoo import query_vocabulary
 from django.utils.dateparse import parse_datetime
 
@@ -45,10 +45,7 @@ def make_list(request, tag, time_begin, time_end):
 			return False
 		return True
 
-	for vocabulary in Vocabulary.objects.all():
-		if vocabulary.display_order != -1:
-			vocabulary.display_order = -1;
-			vocabulary.save()
+	ListEntry.objects.all().delete()
 	
 	_time_begin = None if time_begin == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_begin), is_dst=False)
 	_time_end = None if time_end == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_end), is_dst=False)
@@ -60,8 +57,7 @@ def make_list(request, tag, time_begin, time_end):
 	random.shuffle(indexes)
 
 	for index, vocabulary in zip(indexes, vocabularies):
-		vocabulary.display_order = index
-		vocabulary.save()
+		ListEntry(vocabulary = vocabularies[index], index = index).save()
 
 	return render(request, "information.html", {'text' : 'The display order of  %d vocabularies has been shuffled' % len(indexes)})
 
@@ -89,6 +85,10 @@ def get_previous_vocabulary(request, vocabulary_id):
 		return HttpResponse(vocabulary.spell)
 	return HttpResponse(previous_vocabulary.spell)
 
+def add_tag_list(request, index, tag_name):
+	entries = ListEntry.objects.order_by('index')
+	return add_tag(request, entries[int(index)].vocabulary.id, tag_name)
+
 def add_tag(request, vocabulary_id, tag_name):
 	vocabulary = Vocabulary.objects.get(id = vocabulary_id)
 	tag = Tag.get_tag(tag_name)
@@ -100,12 +100,25 @@ def add_tag(request, vocabulary_id, tag_name):
 	tag_relation.save()
 	return HttpResponse('')
 
-def show_list(request, order):
-	try:
-		vocabulary = Vocabulary.objects.get(display_order = order)
-	except ObjectDoesNotExist as e:
-		return HttpResponse('<script>window.history.back()</script>')
-	return render(request, 'show_list.html', {'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
+def show_list(request, index):
+	index = int(index)
+	entries = ListEntry.objects.order_by('index')
+	if len(entries) == 0:
+		return HttpResponse('The list is empty')
+	if index >= len(entries) or index >= 20:
+		index = 0
+		return HttpResponse('<script>window.location = "%d";</script>' % (index))
+	elif index < 0:
+		index = min(20, len(entries)) - 1
+		return HttpResponse('<script>window.location = "%d";</script>' % (index))
+	
+	target = entries[index]
+	vocabulary = target.vocabulary
+	return render(request, 'show_list.html', {'index':index, 'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
+
+def remove_from_list(request, index):
+	ListEntry.objects.order_by('index')[int(index)].delete()
+	return HttpResponse('')
 
 def initialize_test(request):
 	for vocabulary in Vocabulary.objects.all():

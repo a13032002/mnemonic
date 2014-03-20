@@ -4,9 +4,11 @@
 <script src="{% static "show_list_event.js"%}"></script>
 <script src="{% static "query.js"%}"></script>
 {% endblock %}
-
 {% block vocabulary-id %}
-{{ vocabulary.display_order}}
+{{ index}}
+{% endblock %}
+{% block extra_buttons %}
+<button id="btn-remove" class="btn-danger btn-lg"> <span class="glyphicon glyphicon-trash"> </span> </button>
 {% endblock %}
 {% block query %}
 {% endblock %}

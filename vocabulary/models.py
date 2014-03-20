@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 class Vocabulary(models.Model):
 	spell = models.CharField(max_length = 200, unique = True)
 	kk = models.CharField(max_length = 200)
-	display_order = models.IntegerField(default = -1)
 	time_inserted = models.DateTimeField()
 	
 	def __str__(self):
@@ -66,4 +65,8 @@ class Question(models.Model):
 	explanation = models.ForeignKey(Explanation)
 	timestamp = models.IntegerField()
 	delay = models.IntegerField()
+
+class ListEntry(models.Model):
+	vocabulary = models.ForeignKey(Vocabulary)
+	index = models.IntegerField()
 
