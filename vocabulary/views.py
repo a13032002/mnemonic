@@ -7,7 +7,12 @@ from vocabulary.yahoo import query_vocabulary
 from django.utils.dateparse import parse_datetime
 
 import random, pytz
+
+
+from queue import Queue
 # Create your views here.
+
+vocabulary_list = []
 
 def query(request, vocabulary):
 	try:
@@ -45,21 +50,16 @@ def make_list(request, tag, time_begin, time_end):
 			return False
 		return True
 
-	ListEntry.objects.all().delete()
+
 	
 	_time_begin = None if time_begin == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_begin), is_dst=False)
 	_time_end = None if time_end == 'none' else pytz.timezone("Asia/Taipei").localize(parse_datetime(time_end), is_dst=False)
-	vocabularies = [v for v in Vocabulary.objects.all() if filter(v, tag, _time_begin, _time_end)]
+	global vocabulary_list
+	vocabulary_list = [v for v in Vocabulary.objects.all() if filter(v, tag, _time_begin, _time_end)]
 
-	number_of_vocabulary = len(vocabularies)
-	
-	indexes = [i for i in range(number_of_vocabulary)]
-	random.shuffle(indexes)
+	random.shuffle(vocabulary_list)
 
-	for index, vocabulary in zip(indexes, vocabularies):
-		ListEntry(vocabulary = vocabularies[index], index = index).save()
-
-	return render(request, "information.html", {'text' : 'The display order of  %d vocabularies has been shuffled' % len(indexes)})
+	return render(request, "information.html", {'text' : 'The display order of  %d vocabularies has been shuffled' % len(vocabulary_list)})
 
 
 def explanation_mark_important(request, explanation_id):
@@ -101,8 +101,9 @@ def add_tag(request, vocabulary_id, tag_name):
 	return HttpResponse('')
 
 def show_list(request, index):
+	global vocabulary_list
 	index = int(index)
-	entries = ListEntry.objects.order_by('index')
+	entries = vocabulary_list
 	if len(entries) == 0:
 		return HttpResponse('The list is empty')
 	if index >= len(entries) or index >= 20:
@@ -113,11 +114,11 @@ def show_list(request, index):
 		return HttpResponse('<script>window.location = "%d";</script>' % (index))
 	
 	target = entries[index]
-	vocabulary = target.vocabulary
+	vocabulary = target
 	return render(request, 'show_list.html', {'index':index, 'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
 
 def remove_from_list(request, index):
-	ListEntry.objects.order_by('index')[int(index)].delete()
+	del vocabulary_list[int(index)]
 	return HttpResponse('')
 
 def initialize_test(request):
