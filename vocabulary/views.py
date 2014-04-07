@@ -121,6 +121,20 @@ def remove_from_list(request, index):
 	del vocabulary_list[int(index)]
 	return HttpResponse('')
 
+def show_all(request):
+	global vocabulary_list
+	html_table = "<table border=\"1\">\n"
+	for vocabulary in vocabulary_list:
+		important_explanations = []
+		for explanation in vocabulary.explanation_set.all():
+			if explanation.mark_important:
+				important_explanations.append(explanation.description)
+		if len(important_explanations) > 0:
+			html_table += "<tr><td>%s</td><td>%s</td></tr>\n" % (vocabulary.spell, ';'.join(important_explanations))
+	html_table += '</table>\n'
+	return HttpResponse('<html><head><meta charset="utf-8"><title>Mnemonic</title></head><body>%s</body></html>' % (html_table))
+		
+
 def initialize_test(request):
 	for vocabulary in Vocabulary.objects.all():
 		for explanation in vocabulary.explanation_set.all():
