@@ -3,6 +3,7 @@ from vocabulary import views
 
 urlpatterns = patterns('',
 	url(r'^(?P<vocabulary>[A-Za-z ]+)$', views.query),
+	url(r'^(?P<vocabulary_id>\d+)$', views.query_by_id),
 	url(r'^explanation/change-order/(?P<explanation_id_1>\d+)/(?P<explanation_id_2>\d+)$', views.explanation_change_order),
 	url(r'^explanation/mark-important/(?P<explanation_id>\d+)$', views.explanation_mark_important),
 	url(r'^list/explanation/change-order/(?P<explanation_id_1>\d+)/(?P<explanation_id_2>\d+)$', views.explanation_change_order),

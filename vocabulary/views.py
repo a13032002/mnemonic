@@ -115,7 +115,7 @@ def show_list(request, index):
 	
 	target = entries[index]
 	vocabulary = target
-	return render(request, 'show_list.html', {'index':index, 'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
+	return render(request, 'show_list.html', {'total': len(vocabulary_list), 'index':index, 'vocabulary':vocabulary, 'part_of_speechs': vocabulary.get_part_of_speechs()})
 
 def remove_from_list(request, index):
 	del vocabulary_list[int(index)]

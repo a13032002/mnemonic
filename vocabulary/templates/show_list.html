@@ -4,8 +4,11 @@
 <script src="{% static "show_list_event.js"%}"></script>
 <script src="{% static "query.js"%}"></script>
 {% endblock %}
-{% block vocabulary-id %}
-{{ index}}
+{% block vocabulary-id %}{{index}}{% endblock %}
+{% block total-id %}
+<span class="badge" id="vocabulary-id">
+{{total}}
+</span>
 {% endblock %}
 {% block extra_buttons %}
 <button id="btn-remove" class="btn-danger btn-lg"> <span class="glyphicon glyphicon-trash"> </span> </button>
